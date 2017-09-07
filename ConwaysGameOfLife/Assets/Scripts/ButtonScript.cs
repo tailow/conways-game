@@ -5,7 +5,13 @@ using UnityEngine.UI;
 
 public class ButtonScript : MonoBehaviour {
 
-	public void ToggleButtonColor()
+    #region Variables
+
+    public GameObject gameManager;
+
+    #endregion
+
+    public void ToggleButtonColor()
     {
         Color currentColor = GetComponent<Image>().color;
 
@@ -23,5 +29,20 @@ public class ButtonScript : MonoBehaviour {
         {
             Debug.Log("Failed to check for current color.");
         }
+    }
+
+    public void StartGame()
+    {
+        gameManager.SendMessage("StartGame");
+    }
+
+    public void PauseGame()
+    {
+        gameManager.SendMessage("PauseGame");
+    }
+
+    public void StopGame()
+    {
+        gameManager.SendMessage("StopGame");
     }
 }

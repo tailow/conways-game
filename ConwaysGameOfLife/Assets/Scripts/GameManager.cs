@@ -6,6 +6,8 @@ public class GameManager : MonoBehaviour {
 
     #region Variables
 
+    int topBarSize = 150;
+
     Vector2 blockSize;
     Vector2 amountOfBlocks;
 
@@ -17,16 +19,45 @@ public class GameManager : MonoBehaviour {
     void Start()
     {
         blockSize = new Vector2(30, 30);
-        amountOfBlocks = new Vector2(Screen.width/blockSize.x, Screen.height/blockSize.y);
+        amountOfBlocks = new Vector2((Screen.width) / blockSize.x, (Screen.height - topBarSize) / blockSize.y);
 
         blockArray = new GameObject[(int)amountOfBlocks.x, (int)amountOfBlocks.y];
 
         GenerateBlocks();
     }
 
+    void StartGame()
+    {
+        StartCoroutine("StartGameCoroutine");
+    }
+
+    void PauseGame()
+    {
+        Debug.Log("Pause");
+
+        StopCoroutine("StartGameCoroutine");
+    }
+
+    void StopGame()
+    {
+        Debug.Log("Stop");
+
+        StopCoroutine("StartGameCoroutine");
+    }
+
+    IEnumerator StartGameCoroutine()
+    {
+        for (int i = 0; i < Mathf.Infinity; i++)
+        {
+            Debug.Log(i);
+
+            yield return new WaitForSeconds(0.5f);
+        }      
+    }
+
     void GenerateBlocks()
     {
-        for (int y = 15; y < Screen.height; y += (int)blockSize.y)
+        for (int y = 15; y < Screen.height - topBarSize; y += (int)blockSize.y)
         {
             for (int x = 15; x < Screen.width; x += (int)blockSize.x)
             {
