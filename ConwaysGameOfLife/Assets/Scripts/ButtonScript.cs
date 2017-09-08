@@ -49,6 +49,11 @@ public class ButtonScript : MonoBehaviour {
                 amountOfActiveNeighbors++;
             }
         }
+
+        if (gameObject.GetComponent<Image>().color == Color.black)
+        {
+            amountOfActiveNeighbors--;
+        }
     }
 
     void CheckActiveNeighbors()
@@ -66,6 +71,8 @@ public class ButtonScript : MonoBehaviour {
         {
             gameManagerScript.nextActiveBlocksList.Add(gameObject);
         }
+
+        amountOfActiveNeighbors = 0;
     }
 
     public void StartGame()
@@ -81,5 +88,10 @@ public class ButtonScript : MonoBehaviour {
     public void StopGame()
     {
         gameManagerScript.SendMessage("StopGame");
+    }
+
+    public void ExitGame()
+    {
+        Application.Quit();
     }
 }

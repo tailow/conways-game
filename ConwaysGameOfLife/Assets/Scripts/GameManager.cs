@@ -46,6 +46,8 @@ public class GameManager : MonoBehaviour {
         StopCoroutine("StartGameCoroutine");
 
         InactivateBlocks();
+
+        nextActiveBlocksList.Clear();
     }
 
     void CheckAllActiveBlocks()
@@ -101,7 +103,7 @@ public class GameManager : MonoBehaviour {
             // Clear next active blocks list
             nextActiveBlocksList.Clear();
 
-            // Add next active blocks to Vector2 list
+            // Add next active blocks to list
             AddAllNextBlocks();
 
             // Set all blocks to inactive
@@ -116,7 +118,7 @@ public class GameManager : MonoBehaviour {
             // List current active blocks
             CheckAllActiveBlocks();
 
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.2f);
         }      
     }
 
