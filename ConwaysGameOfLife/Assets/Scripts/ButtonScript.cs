@@ -7,9 +7,18 @@ public class ButtonScript : MonoBehaviour {
 
     #region Variables
 
-    public GameObject gameManager;
+    GameManager gameManagerScript;
+
+    int amountOfActiveNeighbors;
+
+    Collider2D[] allNeighborsArray = new Collider2D[9];
 
     #endregion
+
+    void Start()
+    {
+        gameManagerScript = GameObject.Find("GameManager").GetComponent<GameManager>();    
+    }
 
     public void ToggleButtonColor()
     {
@@ -31,18 +40,46 @@ public class ButtonScript : MonoBehaviour {
         }
     }
 
+    void GetAmountOfActiveNeighbors()
+    {
+        foreach (Collider2D block in allNeighborsArray)
+        {
+            if (block.gameObject.GetComponent<Image>().color == Color.black)
+            {
+                amountOfActiveNeighbors++;
+            }
+        }
+    }
+
+    void CheckActiveNeighbors()
+    {
+        allNeighborsArray = Physics2D.OverlapBoxAll(gameObject.transform.position, new Vector2(40, 40), 0f);
+
+        GetAmountOfActiveNeighbors();
+
+        if (amountOfActiveNeighbors == 3)
+        {
+            gameManagerScript.nextActiveBlocksList.Add(gameObject);
+        }
+
+        if (amountOfActiveNeighbors == 2 && GetComponent<Image>().color == Color.black)
+        {
+            gameManagerScript.nextActiveBlocksList.Add(gameObject);
+        }
+    }
+
     public void StartGame()
     {
-        gameManager.SendMessage("StartGame");
+        gameManagerScript.SendMessage("StartGame");
     }
 
     public void PauseGame()
     {
-        gameManager.SendMessage("PauseGame");
+        gameManagerScript.SendMessage("PauseGame");
     }
 
     public void StopGame()
     {
-        gameManager.SendMessage("StopGame");
+        gameManagerScript.SendMessage("StopGame");
     }
 }

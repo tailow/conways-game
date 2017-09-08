@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour {
     GameObject[,] blockArray;
 
     List<Vector2> activeBlocksList = new List<Vector2>();
+    public List<GameObject> nextActiveBlocksList = new List<GameObject>();
 
     #endregion
 
@@ -37,16 +38,14 @@ public class GameManager : MonoBehaviour {
 
     void PauseGame()
     {
-        Debug.Log("Pause");
-
         StopCoroutine("StartGameCoroutine");
     }
 
     void StopGame()
     {
-        Debug.Log("Stop");
-
         StopCoroutine("StartGameCoroutine");
+
+        InactivateBlocks();
     }
 
     void CheckAllActiveBlocks()
@@ -65,37 +64,59 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-    void CheckAllNeighbors()
+    void InactivateBlocks()
     {
-        foreach (Vector2 block in activeBlocksList)
+        for (int y = 0; y < amountOfBlocks.y; y++)
         {
-            CheckAmountOfActiveNeighbors(block);
-
-            // Decide what happens to this block
+            for (int x = 0; x < amountOfBlocks.x; x++)
+            {
+                if (blockArray[x, y].GetComponent<Image>().color == Color.black)
+                {
+                    blockArray[x, y].GetComponent<Image>().color = Color.white;
+                }
+            }
         }
     }
 
-    
-    int CheckAmountOfActiveNeighbors(Vector2 currentPos)
+    void ActivateNextBlocks()
     {
-        int amount = 0;
-
-        // Check all neighbors
-        // Decide what happens to them
-
-        return amount;
+        foreach (GameObject block in nextActiveBlocksList)
+        {
+            block.GetComponent<Image>().color = Color.black;
+        }
     }
-    
+
+    void AddAllNextBlocks()
+    {
+        foreach (GameObject block in blockArray)
+        {
+            block.SendMessage("CheckActiveNeighbors");
+        }
+    }
 
     IEnumerator StartGameCoroutine()
     {
         for (int i = 0; i < Mathf.Infinity; i++)
         {
-            //CheckAllActiveBlocks();
+            // Clear next active blocks list
+            nextActiveBlocksList.Clear();
 
-            //CheckAllNeighbors();
+            // Add next active blocks to Vector2 list
+            AddAllNextBlocks();
 
-            yield return new WaitForSeconds(0.5f);
+            // Set all blocks to inactive
+            InactivateBlocks();
+
+            // Set listed blocks active
+            ActivateNextBlocks();
+
+            // Clear current active blocks list
+            activeBlocksList.Clear();
+
+            // List current active blocks
+            CheckAllActiveBlocks();
+
+            yield return new WaitForSeconds(0.1f);
         }      
     }
 
