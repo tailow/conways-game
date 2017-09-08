@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour {
 
     GameObject[,] blockArray;
 
-    List<GameObject> activeBlocksList = new List<GameObject>();
+    List<Vector2> activeBlocksList = new List<Vector2>();
 
     #endregion
 
@@ -53,22 +53,47 @@ public class GameManager : MonoBehaviour {
     {
         activeBlocksList.Clear();
 
-        foreach (GameObject block in blockArray)
+        for (int y = 0; y < amountOfBlocks.y; y++)
         {
-            if (block.GetComponent<Image>().color == Color.black)
+            for (int x = 0; x < amountOfBlocks.x; x++)
             {
-                activeBlocksList.Add(block);
+                if (blockArray[x, y].GetComponent<Image>().color == Color.black)
+                {
+                    activeBlocksList.Add(new Vector2(x, y));
+                }
             }
         }
     }
 
+    void CheckAllNeighbors()
+    {
+        foreach (Vector2 block in activeBlocksList)
+        {
+            CheckAmountOfActiveNeighbors(block);
+
+            // Decide what happens to this block
+        }
+    }
+
+    
+    int CheckAmountOfActiveNeighbors(Vector2 currentPos)
+    {
+        int amount = 0;
+
+        // Check all neighbors
+        // Decide what happens to them
+
+        return amount;
+    }
+    
+
     IEnumerator StartGameCoroutine()
     {
-        CheckAllActiveBlocks();
-
         for (int i = 0; i < Mathf.Infinity; i++)
         {
-            //Debug.Log(i);
+            //CheckAllActiveBlocks();
+
+            //CheckAllNeighbors();
 
             yield return new WaitForSeconds(0.5f);
         }      
