@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEditor;
 
 public class ButtonScript : MonoBehaviour {
 
@@ -17,7 +18,7 @@ public class ButtonScript : MonoBehaviour {
 
     void Start()
     {
-        gameManagerScript = GameObject.Find("GameManager").GetComponent<GameManager>();    
+        gameManagerScript = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
     public void ToggleButtonColor()
@@ -32,11 +33,6 @@ public class ButtonScript : MonoBehaviour {
         else if (currentColor == Color.black)
         {
             GetComponent<Image>().color = Color.white;
-        }
-
-        else
-        {
-            Debug.Log("Failed to check for current color.");
         }
     }
 
@@ -58,16 +54,16 @@ public class ButtonScript : MonoBehaviour {
 
     void CheckActiveNeighbors()
     {
-        allNeighborsArray = Physics2D.OverlapBoxAll(gameObject.transform.position, new Vector2(40, 40), 0f);
+        allNeighborsArray = Physics2D.OverlapBoxAll(gameObject.transform.position, new Vector2(gameManagerScript.blockSize.x * 1.1f, gameManagerScript.blockSize.y * 1.1f), 0f);
 
         GetAmountOfActiveNeighbors();
 
-        if (amountOfActiveNeighbors == 3)
+        if ((amountOfActiveNeighbors == gameManagerScript.amountToSpawn) && GetComponent<Image>().color == Color.white)
         {
             gameManagerScript.nextActiveBlocksList.Add(gameObject);
         }
 
-        if (amountOfActiveNeighbors == 2 && GetComponent<Image>().color == Color.black)
+        if ((amountOfActiveNeighbors <= gameManagerScript.maxNeighbors && amountOfActiveNeighbors >= gameManagerScript.minNeighbors) && GetComponent<Image>().color == Color.black)
         {
             gameManagerScript.nextActiveBlocksList.Add(gameObject);
         }

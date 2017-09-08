@@ -7,26 +7,27 @@ public class GameManager : MonoBehaviour {
 
     #region Variables
 
-    int topBarSize = 150;
+    public Vector2 blockSize;
+    public int amountOfBlocksX = 16;
+    public int amountOfBlocksY = 9;
 
-    Vector2 blockSize;
-    Vector2 amountOfBlocks;
+    public int minNeighbors = 2;
+    public int maxNeighbors = 5;
+    public int amountToSpawn = 3;
+
+    public float tickTime = 0.1f;
 
     public GameObject blockPrefab;
 
-    GameObject[,] blockArray;
+    List<GameObject> blockList = new List<GameObject>();
 
-    List<Vector2> activeBlocksList = new List<Vector2>();
     public List<GameObject> nextActiveBlocksList = new List<GameObject>();
 
     #endregion
 
     void Start()
     {
-        blockSize = new Vector2(30, 30);
-        amountOfBlocks = new Vector2((Screen.width) / blockSize.x, (Screen.height - topBarSize) / blockSize.y);
-
-        blockArray = new GameObject[(int)amountOfBlocks.x, (int)amountOfBlocks.y];
+        blockSize = new Vector2(Screen.width / amountOfBlocksX, Screen.height / amountOfBlocksY);        
 
         GenerateBlocks();
     }
@@ -50,32 +51,13 @@ public class GameManager : MonoBehaviour {
         nextActiveBlocksList.Clear();
     }
 
-    void CheckAllActiveBlocks()
-    {
-        activeBlocksList.Clear();
-
-        for (int y = 0; y < amountOfBlocks.y; y++)
-        {
-            for (int x = 0; x < amountOfBlocks.x; x++)
-            {
-                if (blockArray[x, y].GetComponent<Image>().color == Color.black)
-                {
-                    activeBlocksList.Add(new Vector2(x, y));
-                }
-            }
-        }
-    }
-
     void InactivateBlocks()
     {
-        for (int y = 0; y < amountOfBlocks.y; y++)
+        foreach (GameObject block in blockList)
         {
-            for (int x = 0; x < amountOfBlocks.x; x++)
+            if (block.GetComponent<Image>().color == Color.black)
             {
-                if (blockArray[x, y].GetComponent<Image>().color == Color.black)
-                {
-                    blockArray[x, y].GetComponent<Image>().color = Color.white;
-                }
+                block.GetComponent<Image>().color = Color.white;
             }
         }
     }
@@ -90,7 +72,7 @@ public class GameManager : MonoBehaviour {
 
     void AddAllNextBlocks()
     {
-        foreach (GameObject block in blockArray)
+        foreach (GameObject block in blockList)
         {
             block.SendMessage("CheckActiveNeighbors");
         }
@@ -112,35 +94,23 @@ public class GameManager : MonoBehaviour {
             // Set listed blocks active
             ActivateNextBlocks();
 
-            // Clear current active blocks list
-            activeBlocksList.Clear();
-
-            // List current active blocks
-            CheckAllActiveBlocks();
-
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(tickTime);
         }      
     }
 
     void GenerateBlocks()
     {
-        int blockNumberX = 0;
-        int blockNumberY = 0;
-
-        for (int y = 15; y < Screen.height - topBarSize; y += (int)blockSize.y)
+        for (int y = (int)(blockSize.y / 2); y < Screen.height; y += (int)blockSize.y)
         {     
-            for (int x = 15; x < Screen.width; x += (int)blockSize.x)
+            for (int x = (int)(blockSize.x / 2); x < Screen.width; x += (int)blockSize.x)
             {
                 var blockObj = Instantiate(blockPrefab, new Vector2(x, y), Quaternion.identity);
 
                 blockObj.transform.SetParent(GameObject.Find("Blocks").transform);
-                blockArray[blockNumberX, blockNumberY] = blockObj;
+                blockObj.GetComponent<RectTransform>().localScale = blockSize;
 
-                blockNumberX++;
+                blockList.Add(blockObj);
             }
-
-            blockNumberY++;
-            blockNumberX = 0;
         }
     }
 }
